@@ -103,25 +103,12 @@
 						@yield('content')
 					</main>
 					<div class="page-content-overlay" data-action="toggle" data-class="mobile-nav-on"></div>
-					<!-- end page content -->
-
-					<!-- begin page footer -->
-					{{-- @include('partials.footer') --}}
-					<!-- end page footer -->
-					<!-- begin shortcut -->
-					{{-- @include('partials.shortcut') --}}
-					<!-- end shortcut -->
 				</div>
 			</div>
 		</div>
 		<form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">
 			{{ csrf_field() }}
 		</form>
-		<!-- end page wrapper -->
-		<!-- begin quick menu -->
-		{{-- @include('partials.quickmenu') --}}
-		<!-- end quick menu -->
-		{{-- base app script --}}
 		<script src="{{ asset('js/app.js') }}"></script>
 
 		<!-- Smartadmin core -->
@@ -201,7 +188,7 @@
 		$('.searchable-field').select2({
 			minimumInputLength: 3,
 			ajax: {
-			url: '{{ route("admin.globalSearch") }}',
+			url: '',
 			dataType: 'json',
 			type: 'GET',
 			delay: 200,

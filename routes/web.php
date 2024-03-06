@@ -8,61 +8,85 @@ Route::get('/', function () {
 });
 
 Route::get('/home', function () {
-	if (session('status')) {
-		return redirect()->route('admin.home')->with('status', session('status'));
+	$roleaccess = Auth::user()->roles[0]->title;
+	if ($roleaccess == 'SUPERADMIN'){
+		if (session('status')) {
+			return redirect()->route('sroot.home')->with('status', session('status'));
+		}
+		return redirect()->route('sroot.home');
 	}
-	return redirect()->route('admin.home');
+	if ($roleaccess == 'Admin'){
+		if (session('status')) {
+			return redirect()->route('admin.home')->with('status', session('status'));
+		}
+		return redirect()->route('admin.home');
+	}
 });
 
-Auth::routes(['register' => false]); // menghidupkan registration
+Auth::routes(['register' => true]); // menghidupkan registration
+
+Route::group(['prefix' => 'sroot', 'as' => 'sroot.', 'middleware' => ['auth']], function () {
+	Route::group(['namespace' => 'Admin'], function () {
+		//Landing
+		Route::get('/', 'HomeController@index')->name('home');
+
+		//broadcasting
+
+		//user management
+	});
+	Route::group(['namespace' => 'Sroot'], function () {
+		//google map api
+		Route::get('gmapapi', 'ForeignApiController@edit')->name('gmapapi.edit');
+		Route::put('gmapapi/update', 'ForeignApiController@update')->name('gmapapi.update');
+	});
+});
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], function () {
 	Route::group(['namespace' => 'Admin'], function () {
 		// Admin landing
 		Route::get('/', 'HomeController@index')->name('home');
 	});
-
 });
 
 //route untuk Pelaku usaha
 Route::group(['prefix' => 'importir', 'as' => 'importir.', 'middleware' => ['auth']], function () {
 	Route::group(['namespace' => 'Importir'], function () {
 		// Admin landing
-		Route::get('/', 'HomeController@index')->name('home');
+
 	});
 });
 
 Route::group(['prefix' => 'verification', 'as' => 'verification.', 'middleware' => ['auth']], function () {
 	Route::group(['namespace' => 'Verifikator'], function () {
 		// Admin landing
-		Route::get('/', 'HomeController@index')->name('home');
+
 	});
 });
 
 Route::group(['prefix' => 'direktur', 'as'=>'direktur', 'middleware' => ['auth']], function () {
 	Route::group(['namespace' => 'Pejabat'], function () {
 		// Admin landing
-		Route::get('/', 'HomeController@index')->name('home');
+
 	});
 });
 
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
 	Route::group(['namespace' => 'Admin'], function () {
 		// Admin landing
-		Route::get('/', 'HomeController@index')->name('home');
+
 	});
 });
 
 Route::group(['prefix' => 'support', 'as' => 'support.', 'middleware' => ['auth']], function () {
 	Route::group(['namespace' => 'Support'], function () {
 		// Admin landing
-		Route::get('/', 'HomeController@index')->name('home');
+
 	});
 });
 
 Route::group(['prefix' => 'test', 'as' => 'test.', 'namespace' => 'Admin', 'middleware' => ['auth']], function () {
 	Route::group(['namespace' => 'Test'], function () {
 		// Admin landing
-		Route::get('/', 'HomeController@index')->name('home');
+
 	});
 });
