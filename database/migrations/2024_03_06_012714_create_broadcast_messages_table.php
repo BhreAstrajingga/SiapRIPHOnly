@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('broadcast_messages', function (Blueprint $table) {
             $table->id();
-			$table->int('type');
+			$table->string('type', 15);
 			$table->string('title', 255);
 			$table->text('messages');
 			$table->int('status');

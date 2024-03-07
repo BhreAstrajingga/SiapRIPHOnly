@@ -31,13 +31,17 @@ Route::group(['prefix' => 'sroot', 'as' => 'sroot.', 'middleware' => ['auth']], 
 		Route::get('/', 'HomeController@index')->name('home');
 
 		//broadcasting
+		Route::group(['prefix' => 'broadcasts', 'as' => 'broadcasts.'], function () {
+			Route::get('/', 'BroadcastMessagesController@index')->name('index');
+			Route::get('/{id}/edit', 'BroadcastMessagesController@edit')->name('edit');
+		});
 
 		//user management
 	});
-	Route::group(['namespace' => 'Sroot'], function () {
+	Route::group(['prefix' => 'gmapapi', 'as' => 'gmapapi.', 'namespace' => 'Sroot'], function () {
 		//google map api
-		Route::get('gmapapi', 'ForeignApiController@edit')->name('gmapapi.edit');
-		Route::put('gmapapi/update', 'ForeignApiController@update')->name('gmapapi.update');
+		Route::get('/', 'ForeignApiController@edit')->name('edit');
+		Route::put('/update', 'ForeignApiController@update')->name('update');
 	});
 });
 

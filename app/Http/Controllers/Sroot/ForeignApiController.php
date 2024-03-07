@@ -18,7 +18,7 @@ class ForeignApiController extends Controller
      */
     public function index()
     {
-		abort_if(Auth::user()->roleaccess != 1, Response::HTTP_FORBIDDEN, '403 Forbidden');
+		abort_if(Auth::user()->roles[0]->title != 'SUPERADMIN', Response::HTTP_FORBIDDEN, '403 Forbidden');
         $module_name = 'FOREIGN API';
 		$page_title = 'Google Map API';
 		$page_heading = 'Google Map API ';

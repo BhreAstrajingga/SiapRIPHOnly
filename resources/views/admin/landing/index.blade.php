@@ -28,24 +28,26 @@
 			</div>
 		</div>
 
-		<div class="alert alert-primary alert-dismissible fade show" role="alert">
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-				<span aria-hidden="true"><i class="fal fa-times"></i></span>
-			</button>
-			<div class="d-flex align-items-center">
-				<div class="alert-icon width-2">
-					<span class="icon-stack" style="font-size: 22px;">
-						<i class="base-2 icon-stack-3x color-primary-400"></i>
-						<i class="base-10 text-white icon-stack-1x"></i>
-						<i class="ni md-profile color-primary-800 icon-stack-2x"></i>
-					</span>
-				</div>
-				<div class="flex-1 text-danger">
-					<strong class="text-uppercase">pengumuman! </strong>
-					Data dari database, status = last aktif, type = info, warning, danger, success
+		@if($message)
+			<div class="alert alert-primary alert-dismissible fade show" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true"><i class="fal fa-times"></i></span>
+				</button>
+				<div class="d-flex align-items-top">
+					<div class="alert-icon width-2">
+						<span class="icon-stack" style="font-size: 22px;">
+							<i class="base-2 icon-stack-3x color-{{$message->type}}-400"></i>
+							<i class="base-10 text-white icon-stack-1x"></i>
+							<i class="ni md-profile color-{{$message->type}}-800 icon-stack-2x"></i>
+						</span>
+					</div>
+					<div class="flex-1">
+						<strong class="text-uppercase fw-700 text-{{$message->type}}">{{$message->title}} </strong> <br>
+						{{$message->messages}}
+					</div>
 				</div>
 			</div>
-		</div>
+		@endif
 
 		<div class="row">
 		</div>

@@ -70,8 +70,8 @@
 
 			@if (Auth::user()->roles[0]->title == 'SUPERADMIN' )
 				<li class="nav-title" data-i18n="nav.superadmin">SUPERADMIN</li>
-				<li class="{{ request()->is('admin/gmapapi*') ? 'active open' : '' }} ">
-					<a href="" title="Create Broadcast Messages"
+				<li class="{{ request()->is('sroot/broadcasts*') ? 'active open' : '' }} ">
+					<a href="{{route('sroot.broadcasts.index')}}" title="Create Broadcast Messages"
 						data-filter-tags="info broadcast pengumuman">
 						<i class="fal fa-speaker"></i>
 						<span class="nav-link-text">Broadcasting</span>

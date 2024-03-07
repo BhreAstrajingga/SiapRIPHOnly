@@ -14,7 +14,6 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PermissionsController extends Controller
 {
-    
     public function index(Request $request)
     {
         abort_if(Gate::denies('permission_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -41,7 +40,7 @@ class PermissionsController extends Controller
             ));
             });
 
-            
+
 
             $table->editColumn('title', function ($row) {
                 return $row->title ? $row->title : '';
@@ -54,11 +53,11 @@ class PermissionsController extends Controller
                 $out = '';
                 foreach($grpTitle as $key => $label){
                     if ($label['title'] == $row->grp_title){
-                        $out = $label['title']; 
-                        break;  
+                        $out = $label['title'];
+                        break;
                     }
                 }
-                
+
                 return $row->grp_title ? $out : '';
             });
 
@@ -66,7 +65,7 @@ class PermissionsController extends Controller
 
             return $table->make(true);
         }
-        
+
         $breadcrumb = trans('cruds.permission.title') ." ". trans('global.list');
         return view('admin.permissions.index', compact('breadcrumb'));
     }
@@ -83,7 +82,7 @@ class PermissionsController extends Controller
     public function store(StorePermissionRequest $request)
     {
         $permission = Permission::create($request->all());
-        
+
         return redirect()->route('admin.permissions.index');
     }
 
@@ -92,7 +91,7 @@ class PermissionsController extends Controller
         abort_if(Gate::denies('permission_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $grpTitle = trans('cruds');
-        
+
         $breadcrumb = trans('global.edit') . " ".  trans('cruds.permission.title') ;
         return view('admin.permissions.edit', compact('permission', 'grpTitle', 'breadcrumb'));
     }
