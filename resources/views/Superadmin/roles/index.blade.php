@@ -10,7 +10,7 @@
 				</h2>
 
 				<div class="panel-toolbar">
-					<a class="btn btn-success  waves-effect waves-themed btn-sm mr-2" href="{{ route('admin.roles.create') }}" data-toggle="tooltip" title="tambah data" data-original-title="tambah data">
+					<a class="btn btn-success  waves-effect waves-themed btn-sm mr-2" href="{{ route('sroot.roles.create') }}" data-toggle="tooltip" title="tambah data" data-original-title="tambah data">
 						{{ trans('global.add') }} {{ trans('cruds.role.title') }}
 					</a>
 				</div>
@@ -53,11 +53,11 @@
 <script>
     $(function () {
     let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-    @can('role_delete')
+    @can('can_sroot')
       let deleteButtonTrans = '{{ trans('global.datatables.delete') }}';
       let deleteButton = {
         text: deleteButtonTrans,
-        url: "{{ route('admin.roles.massDestroy') }}",
+        url: "{{ route('sroot.roles.massDestroy') }}",
         className: 'btn-danger  waves-effect waves-themed  mr-1',
         action: function (e, dt, node, config) {
           var ids = $.map(dt.rows({ selected: true }).data(), function (entry) {
@@ -106,7 +106,7 @@
 					"<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-8 d-flex'B><'col-sm-12 col-md-2 d-flex justify-content-end'f>>" +
 					"<'row'<'col-sm-12 col-md-12'tr>>" +
 					"<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'p>>",
-    ajax: "{{ route('admin.roles.index') }}",
+    ajax: "{{ route('sroot.roles.index') }}",
     columns: [
       { data: 'placeholder', name: 'placeholder' },
       { data: 'title', name: 'title' },

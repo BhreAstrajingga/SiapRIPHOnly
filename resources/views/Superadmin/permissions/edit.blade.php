@@ -4,7 +4,7 @@
 <div class="row">
 	<div class="col-12">
 		<div id="panel-1" class="panel panel-lock show" data-panel-sortable data-panel-close data-panel-collapsed>
-			<form method="POST" action="{{ route("admin.permissions.update", [$permission->id]) }}" enctype="multipart/form-data">
+			<form method="POST" action="{{ route("sroot.permissions.update", [$permission->id]) }}" enctype="multipart/form-data">
                 @method('PUT')
                 @csrf
                 <div class="panel-hdr">
@@ -16,7 +16,7 @@
                             <button class="btn btn-success  waves-effect waves-themed btn-sm mr-2" type="submit">
                                 {{ trans('global.save') }}
                             </button>
-                            <a class="btn btn-danger  waves-effect waves-themed btn-sm mr-2" href="{{ route('admin.permissions.index') }}">
+                            <a class="btn btn-danger  waves-effect waves-themed btn-sm mr-2" href="{{ route('sroot.permissions.index') }}">
                                 {{ trans('global.cancel') }}
                             </a>
                         </div>
@@ -58,14 +58,14 @@
                                         @foreach($grpTitle as $key => $label)
                                             @if ($label['is_hidden'] == '0')
                                                 @if($label['level']=='0')
-                                                    <option value="{{ $label['title'] }}" {{ old('grp_title', $permission->grp_title) === $label['title'] ? 'selected' : '' }} >{{ $label['title'] }}</option>    
+                                                    <option value="{{ $label['title'] }}" {{ old('grp_title', $permission->grp_title) === $label['title'] ? 'selected' : '' }} >{{ $label['title'] }}</option>
                                                 @elseif ($label['level']=='1')
                                                     <option value="{{ $label['title'] }}" {{ old('grp_title', $permission->grp_title) === $label['title'] ? 'selected' : '' }}>&nbsp;&nbsp;&nbsp;{{ $label['title'] }}</option>
                                                 @elseif ($label['level']=='2')
                                                     <option value="{{ $label['title'] }}" {{ old('grp_title', $permission->grp_title) === $label['title'] ? 'selected' : '' }}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $label['title'] }}</option>
                                                 @elseif ($label['level']=='3')
                                                     <option value="{{ $label['title'] }}" {{ old('grp_title', $permission->grp_title) === $label['title'] ? 'selected' : '' }}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $label['title'] }}</option>
-                                               @endif  
+                                               @endif
                                             @endif
                                         @endforeach
                                     </select>
@@ -84,5 +84,5 @@
         </div>
     </div>
 </div>
-                                
+
 @endsection

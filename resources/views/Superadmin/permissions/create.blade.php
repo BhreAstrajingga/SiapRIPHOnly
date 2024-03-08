@@ -4,7 +4,7 @@
 <div class="row">
 	<div class="col-12">
 		<div id="panel-1" class="panel panel-lock show" data-panel-sortable data-panel-close data-panel-collapsed>
-			<form method="POST" action="{{ route("admin.permissions.store") }}" enctype="multipart/form-data">
+			<form method="POST" action="{{ route("sroot.permissions.store") }}" enctype="multipart/form-data">
                 @csrf
                 <div class="panel-hdr">
                     <h2>
@@ -15,7 +15,7 @@
                             <button class="btn btn-success  waves-effect waves-themed btn-sm mr-2" type="submit">
                                 {{ trans('global.save') }}
                             </button>
-                            <a class="btn btn-danger  waves-effect waves-themed btn-sm mr-2" href="{{ route('admin.permissions.index') }}">
+                            <a class="btn btn-danger  waves-effect waves-themed btn-sm mr-2" href="{{ route('sroot.permissions.index') }}">
                                 {{ trans('global.cancel') }}
                             </a>
                         </div>
@@ -55,9 +55,9 @@
                                     <select class="form-control {{ $errors->has('grp_title') ? 'is-invalid' : '' }}" name="grp_title" id="grp_title" required>
                                         <option value disabled {{ old('grp_title', null) === null ? 'selected' : '' }}>{{ trans('global.pleaseSelect') }}</option>
                                         @foreach($grpTitle as $key => $label)
-                                            @if ($label['is_hidden']=='0') 
+                                            @if ($label['is_hidden']=='0')
                                                 @if($label['level']=='0')
-                                                    <option value="{{ $label['title'] }}" {{ old('grp_title', '') === $label['title'] ? 'selected' : '' }} >{{ $label['title'] }}</option>    
+                                                    <option value="{{ $label['title'] }}" {{ old('grp_title', '') === $label['title'] ? 'selected' : '' }} >{{ $label['title'] }}</option>
                                                 @elseif ($label['level']=='1')
                                                     <option value="{{ $label['title'] }}" {{ old('grp_title', '') === $label['title'] ? 'selected' : '' }}>&nbsp;&nbsp;&nbsp;{{ $label['title'] }}</option>
                                                 @elseif ($label['level']=='2')

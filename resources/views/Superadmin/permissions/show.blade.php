@@ -6,10 +6,10 @@
 		<div id="panel-1" class="panel panel-lock show" data-panel-sortable data-panel-close data-panel-collapsed>
 			<div class="panel-hdr">
 				<h2>
-					{{ trans('cruds.role.title') }} | <span class="fw-300"><i>Detail</i></span>
+					{{ trans('cruds.permission.title') }} | <span class="fw-300"><i>Detail</i></span>
 				</h2>
 				<div class="panel-toolbar">
-					<a class="btn btn-primary  waves-effect waves-themed btn-sm mr-2" href="{{ route('admin.roles.index') }}">
+					<a class="btn btn-primary  waves-effect waves-themed btn-sm mr-2" href="{{ route('sroot.permissions.index') }}">
 						{{ trans('global.back_to_list') }}
 					</a>
 				</div>
@@ -20,23 +20,29 @@
 						<div class="col-12">
 
                             <table class="table table-bordered table-striped">
-                                <tbody>
+                                <tbody >
                                     <tr>
                                         <th>
                                             {{ __('Nama') }}
                                         </th>
                                         <td>
-                                            {{ $role->title }}
+                                            {{ $permission->title }}
                                         </td>
                                     </tr>
                                     <tr>
                                         <th>
-                                            {{ __('Hak') }}
+                                            {{ __('Type')}}
                                         </th>
                                         <td>
-                                            @foreach($role->permissions as $key => $permissions)
-                                                <span class="label label-info">{{ $permissions->title }}</span>
-                                            @endforeach
+                                            {{ App\Models\Permission::PERM_TYPE_SELECT[$permission->perm_type] ?? '' }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            {{ __('Group') }}
+                                        </th>
+                                        <td>
+                                            {{ $permission->grp_title }}
                                         </td>
                                     </tr>
                                 </tbody>

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Sroot;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyPermissionRequest;
@@ -16,7 +16,7 @@ class PermissionsController extends Controller
 {
     public function index(Request $request)
     {
-        abort_if(Gate::denies('permission_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('can_sroot'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if ($request->ajax()) {
             $query = Permission::query()->orderBy('created_at', 'desc')->select(sprintf('%s.*', (new Permission())->table));
@@ -31,7 +31,7 @@ class PermissionsController extends Controller
                 $deleteGate = 'permission_delete';
                 $crudRoutePart = 'permissions';
 
-                return view('partials.datatablesActions', compact(
+                return view('partials.rootDatatablesActions', compact(
                 'viewGate',
                 'editGate',
                 'deleteGate',
@@ -67,53 +67,53 @@ class PermissionsController extends Controller
         }
 
         $breadcrumb = trans('cruds.permission.title') ." ". trans('global.list');
-        return view('admin.permissions.index', compact('breadcrumb'));
+        return view('Superadmin.permissions.index', compact('breadcrumb'));
     }
 
     public function create()
     {
-        abort_if(Gate::denies('permission_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('can_sroot'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $grpTitle = trans('cruds');
 
         $breadcrumb = trans('global.create') . " ".  trans('cruds.permission.title') ;
-        return view('admin.permissions.create', compact( 'grpTitle', 'breadcrumb'));
+        return view('Superadmin.permissions.create', compact( 'grpTitle', 'breadcrumb'));
     }
 
     public function store(StorePermissionRequest $request)
     {
         $permission = Permission::create($request->all());
 
-        return redirect()->route('admin.permissions.index');
+        return redirect()->route('sroot.permissions.index');
     }
 
     public function edit(Permission $permission)
     {
-        abort_if(Gate::denies('permission_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('can_sroot'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $grpTitle = trans('cruds');
 
         $breadcrumb = trans('global.edit') . " ".  trans('cruds.permission.title') ;
-        return view('admin.permissions.edit', compact('permission', 'grpTitle', 'breadcrumb'));
+        return view('Superadmin.permissions.edit', compact('permission', 'grpTitle', 'breadcrumb'));
     }
 
     public function update(UpdatePermissionRequest $request, Permission $permission)
     {
         $permission->update($request->all());
 
-        return redirect()->route('admin.permissions.index');
+        return redirect()->route('sroot.permissions.index');
     }
 
     public function show(Permission $permission)
     {
-        abort_if(Gate::denies('permission_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('can_sroot'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $grpTitle = trans('cruds');
         $breadcrumb = trans('global.show') . " ".  trans('cruds.permission.title') ;
-        return view('admin.permissions.show', compact('permission', 'grpTitle', 'breadcrumb'));
+        return view('Superadmin.permissions.show', compact('permission', 'grpTitle', 'breadcrumb'));
     }
 
     public function destroy(Permission $permission)
     {
-        abort_if(Gate::denies('permission_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('can_sroot'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $permission->delete();
 

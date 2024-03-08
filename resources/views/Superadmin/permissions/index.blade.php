@@ -8,9 +8,9 @@
 				<h2>
 					Data | <span class="fw-300"><i>{{ $breadcrumb }}</i></span>
 				</h2>
-				@can('permission_create')
+				@can('can_sroot')
 				<div class="panel-toolbar">
-					<a class="btn btn-success  waves-effect waves-themed btn-sm mr-2" href="{{ route('admin.permissions.create') }}" data-toggle="tooltip" title="tambah data" data-original-title="tambah data">
+					<a class="btn btn-success  waves-effect waves-themed btn-sm mr-2" href="{{ route('sroot.permissions.create') }}" data-toggle="tooltip" title="tambah data" data-original-title="tambah data">
 						{{ trans('global.add') }} {{ trans('cruds.permission.title') }}
 					</a>
 				</div>
@@ -60,11 +60,11 @@
 <script>
 	$(function () {
 		let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-		@can('permission_delete')
+		@can('can_sroot')
 			let deleteButtonTrans = '{{ trans('global.datatables.delete') }}';
 			let deleteButton = {
 				text: deleteButtonTrans,
-				url: "{{ route('admin.permissions.massDestroy') }}",
+				url: "{{ route('sroot.permissions.massDestroy') }}",
 				className: 'btn-danger  waves-effect waves-themed  mr-1',
 				action: function (e, dt, node, config) {
 				var ids = $.map(dt.rows({ selected: true }).data(), function (entry) {
@@ -116,7 +116,7 @@
 				"<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-8 d-flex'B><'col-sm-12 col-md-2 d-flex justify-content-end'f>>" +
 				"<'row'<'col-sm-12 col-md-12'tr>>" +
 				"<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'p>>",
-			ajax: "{{ route('admin.permissions.index') }}",
+			ajax: "{{ route('sroot.permissions.index') }}",
 			columns: [
 				{ data: 'id', name: 'id' },
 				{ data: 'title', name: 'title' },

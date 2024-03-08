@@ -78,8 +78,8 @@ class BroadcastMessagesController extends Controller
     public function edit($id)
     {
         // abort_if(Auth::user()->roleaccess != 1, Response::HTTP_FORBIDDEN, '403 Forbidden');
-		$message = BroadcastMessages::find($id);
 		// abort_if(Auth::user()->id != $message->user_id, Response::HTTP_FORBIDDEN, '403 Forbidden');
+		$message = BroadcastMessages::find($id);
 
         $module_name = 'Broadcasts';
 		$page_title = 'New Broadcasts Messages';

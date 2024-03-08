@@ -8,23 +8,22 @@ Route::get('/', function () {
 });
 
 Route::get('/home', function () {
-	$roleaccess = Auth::user()->roles[0]->title;
-	if ($roleaccess == 'SUPERADMIN'){
+	if (Auth::user()->roles[0]->id == 1){
+		if (session('status')) {
+			return redirect()->route('admin.home')->with('status', session('status'));
+		}
+		return redirect()->route('admin.home');
+	}elseif (Auth::user()->roles[0]->id == 7){
 		if (session('status')) {
 			return redirect()->route('sroot.home')->with('status', session('status'));
 		}
 		return redirect()->route('sroot.home');
 	}
-	if ($roleaccess == 'Admin'){
-		if (session('status')) {
-			return redirect()->route('admin.home')->with('status', session('status'));
-		}
-		return redirect()->route('admin.home');
-	}
 });
 
 Auth::routes(['register' => true]); // menghidupkan registration
 
+//route super admin
 Route::group(['prefix' => 'sroot', 'as' => 'sroot.', 'middleware' => ['auth']], function () {
 	Route::group(['namespace' => 'Admin'], function () {
 		//Landing
@@ -35,20 +34,28 @@ Route::group(['prefix' => 'sroot', 'as' => 'sroot.', 'middleware' => ['auth']], 
 			Route::get('/', 'BroadcastMessagesController@index')->name('index');
 			Route::get('/{id}/edit', 'BroadcastMessagesController@edit')->name('edit');
 		});
-
-		//user management
 	});
-	Route::group(['prefix' => 'gmapapi', 'as' => 'gmapapi.', 'namespace' => 'Sroot'], function () {
-		//google map api
-		Route::get('/', 'ForeignApiController@edit')->name('edit');
-		Route::put('/update', 'ForeignApiController@update')->name('update');
+	Route::group(['namespace' => 'Sroot'], function () {
+		Route::delete('roles/destroy', 'RolesController@massDestroy')->name('roles.massDestroy');
+		Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
+		Route::resource('permissions', 'PermissionsController');
+		Route::resource('roles', 'RolesController');
+
+		Route::group(['prefix' => 'gmapapi', 'as' => 'gmapapi.'], function () {
+			//google map api
+			Route::get('/', 'ForeignApiController@edit')->name('edit');
+			Route::put('/update', 'ForeignApiController@update')->name('update');
+		});
 	});
 });
 
+//route admin
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], function () {
 	Route::group(['namespace' => 'Admin'], function () {
 		// Admin landing
 		Route::get('/', 'HomeController@index')->name('home');
+		Route::delete('users/destroy', 'UsersController@massDestroy')->name('users.massDestroy');
+		Route::resource('users', 'UsersController');
 	});
 });
 

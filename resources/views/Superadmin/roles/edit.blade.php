@@ -4,7 +4,7 @@
 <div class="row">
 	<div class="col-12">
 		<div id="panel-1" class="panel panel-lock show" data-panel-sortable data-panel-close data-panel-collapsed>
-			<form method="POST" action="{{ route("admin.roles.update", [$role->id]) }}" enctype="multipart/form-data">
+			<form method="POST" action="{{ route("sroot.roles.update", [$role->id]) }}" enctype="multipart/form-data">
                 @method('PUT')
                 @csrf
                 <input name="permissions[]" id="idpermissions" type="hidden" >
@@ -17,7 +17,7 @@
                             <button class="btn btn-success  waves-effect waves-themed btn-sm mr-2 btnsave" type="submit">
                                 {{ trans('global.save') }}
                             </button>
-                            <a class="btn btn-danger  waves-effect waves-themed btn-sm mr-2" href="{{ route('admin.roles.index') }}">
+                            <a class="btn btn-danger  waves-effect waves-themed btn-sm mr-2" href="{{ route('sroot.roles.index') }}">
                                 {{ trans('global.cancel') }}
                             </a>
                         </div>
@@ -67,21 +67,21 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            
+
                                             @foreach($grpTitle as $id=>$label )
-                                                @if ($label['is_hidden'] == "0") 
+                                                @if ($label['is_hidden'] == "0")
                                                 <tr>
                                                     <td>
-                                                        @if (($label['is_parent'] == "1") && ($label['level'] == "0")) 
+                                                        @if (($label['is_parent'] == "1") && ($label['level'] == "0"))
                                                             <strong>{{ $label['title'] }}</strong>
-                                                        @elseif ($label['level'] == "1") 
+                                                        @elseif ($label['level'] == "1")
                                                             &nbsp;&nbsp;&nbsp;{{ $label['title'] }}
-                                                        @elseif ($label['level'] == "2") 
+                                                        @elseif ($label['level'] == "2")
                                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $label['title'] }}
-                                                        @elseif ($label['level'] == "3") 
+                                                        @elseif ($label['level'] == "3")
                                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $label['title'] }}
                                                        @endif
-                                                        
+
                                                     </td>
                                                     <td style="padding-left: 44px;">
                                                         @if ($label['can_access'] == "1")
@@ -89,7 +89,7 @@
                                                             @endif
                                                             @foreach($permi as $data)
                                                                 @if (($role->permissions->contains($data->id))&&($data->grp_title==$label['title'])&&($data->perm_type ==5))
-                                                                    <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" checked> 
+                                                                    <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" checked>
                                                                     @if ($mnfound = true)
                                                                     @endif
                                                                     @break
@@ -98,11 +98,11 @@
                                                             @if (!$mnfound)
                                                                 @foreach($permi as $data)
                                                                     @if (($data->grp_title==$label['title'])&&($data->perm_type ==5))
-                                                                        <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" > 
+                                                                        <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" >
                                                                         @break
                                                                     @endif
                                                                 @endforeach
-                                                                
+
                                                             @endif
                                                         @endif
                                                     </td>
@@ -112,7 +112,7 @@
                                                             @endif
                                                             @foreach($permi as $data)
                                                                 @if (($role->permissions->contains($data->id))&&($data->grp_title==$label['title'])&&($data->perm_type ==1))
-                                                                    <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" checked> 
+                                                                    <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" checked>
                                                                     @if ($mnfound = true)
                                                                     @endif
                                                                     @break
@@ -121,11 +121,11 @@
                                                             @if (!$mnfound)
                                                                 @foreach($permi as $data)
                                                                     @if (($data->grp_title==$label['title'])&&($data->perm_type ==1))
-                                                                        <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" > 
+                                                                        <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" >
                                                                         @break
                                                                     @endif
                                                                 @endforeach
-                                                                
+
                                                             @endif
                                                         @endif
                                                     </td>
@@ -135,7 +135,7 @@
                                                             @endif
                                                             @foreach($permi as $data)
                                                                 @if (($role->permissions->contains($data->id))&&($data->grp_title==$label['title'])&&($data->perm_type ==3))
-                                                                    <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" checked> 
+                                                                    <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" checked>
                                                                     @if ($mnfound = true)
                                                                     @endif
                                                                     @break
@@ -144,11 +144,11 @@
                                                             @if (!$mnfound)
                                                                 @foreach($permi as $data)
                                                                     @if (($data->grp_title==$label['title'])&&($data->perm_type ==3))
-                                                                        <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" > 
+                                                                        <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" >
                                                                         @break
                                                                     @endif
                                                                 @endforeach
-                                                                
+
                                                             @endif
                                                         @endif
                                                     </td>
@@ -158,7 +158,7 @@
                                                             @endif
                                                             @foreach($permi as $data)
                                                                 @if (($role->permissions->contains($data->id))&&($data->grp_title==$label['title'])&&($data->perm_type ==2))
-                                                                    <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" checked> 
+                                                                    <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" checked>
                                                                     @if ($mnfound = true)
                                                                     @endif
                                                                     @break
@@ -167,11 +167,11 @@
                                                             @if (!$mnfound)
                                                                 @foreach($permi as $data)
                                                                     @if (($data->grp_title==$label['title'])&&($data->perm_type ==2))
-                                                                        <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" > 
+                                                                        <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" >
                                                                         @break
                                                                     @endif
                                                                 @endforeach
-                                                                
+
                                                             @endif
                                                         @endif
                                                     </td>
@@ -181,7 +181,7 @@
                                                             @endif
                                                             @foreach($permi as $data)
                                                                 @if (($role->permissions->contains($data->id))&&($data->grp_title==$label['title'])&&($data->perm_type ==4))
-                                                                    <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" checked> 
+                                                                    <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" checked>
                                                                     @if ($mnfound = true)
                                                                     @endif
                                                                     @break
@@ -190,18 +190,17 @@
                                                             @if (!$mnfound)
                                                                 @foreach($permi as $data)
                                                                     @if (($data->grp_title==$label['title'])&&($data->perm_type ==4))
-                                                                        <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" > 
+                                                                        <input class="form-check-input check1" type="checkbox"  value="{{ $data->id }}" >
                                                                         @break
                                                                     @endif
                                                                 @endforeach
-                                                                
+
                                                             @endif
                                                         @endif
                                                     </td>
                                                 </tr>
                                                 @endif
                                             @endforeach
-                                            
                                         </tbody>
                                     </table>
                                 </div>
@@ -213,8 +212,8 @@
         </div>
     </div>
 </div>
-    
-    
+
+
 
 
 
@@ -227,36 +226,36 @@
     $('.check-all').click(function () {
         // Iterate each checkbox
         $(':checkbox').each(function() {
-            this.checked = true;                        
+            this.checked = true;
         });
     })
-        
+
     $('.decheck-all').click(function () {
         // Iterate each checkbox
         $(':checkbox').each(function() {
-            this.checked = false;                        
+            this.checked = false;
         });
     })
 
 
     $('.btnsave').click(function () {
-       
+
         var values = []
         $(".check1:checkbox:checked").each(function(){
             let nilai = $(this).val();
             values.push(nilai);
-        }); 
+        });
         $("#idpermissions").val(values[0]);
         for (var i = values.length - 1; i>=1; i--) {
             $("#idpermissions").after(
                 "<input name='permissions[]' id='idpermissions' type='hidden' value="+ values[i]+" />"
-                
+
             );
-        } 
-        
+        }
+
         this.form.submit();
     })
 
-    
+
 </script>
 @endsection
