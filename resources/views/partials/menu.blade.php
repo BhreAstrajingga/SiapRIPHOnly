@@ -36,7 +36,7 @@
 					</span>
 				</a>
 				<span class="d-inline-block text-truncate text-truncate-sm">
-					{{ Auth::user()::find(Auth::user()->id)->data_user->company_name ?? 'user' }}
+					{{ Auth::user()::find(Auth::user()->id)->data_user->company_name ?? Auth::user()->roles[0]->title }}
 				</span>
 			</div>
 			<img src="{{ asset('/img/card-backgrounds/cover-2-lg.png') }}" class="cover" alt="cover">
@@ -68,18 +68,38 @@
 				</li>
 			@endcan
 
+			{{-- user main menu --}}
+			@can('user_task_access')
+				<li class="nav-title">Pelaporan Realisasi</li>
+				@can('pull_access')
+					<li class="c-sidebar-nav-item {{ request()->is('importir/commitment/synchronize') ? 'active' : '' }}">
+						<a href="{{ route('importir.commitment.pull') }}"
+							data-filter-tags="sinkronisasi sync tarik data siap riph">
+							<i class="fa-fw fal fa-sync-alt c-sidebar-nav-icon">
+							</i>
+							{{ trans('cruds.pullSync.title_lang') }}
+						</a>
+					</li>
+				@endcan
+				@can('commitment_access')
+					@if (Auth::user()->roles[0]->title == 'User')
+						<li class="c-sidebar-nav-item {{ request()->is('importir/commitment') ||
+						request()->is('importir/commitment/pks*') ? 'active' : '' }}">
+							<a href="{{ route('importir.commitment.index') }}"
+								data-filter-tags="daftar komitmen riph index">
+								<i class="fa-fw fal fa-ballot c-sidebar-nav-icon"></i>
+								{{ trans('cruds.commitment.title_lang') }}
+							</a>
+						</li>
+					@endif
+				@endcan
+			@endcan
+
 			@if (Auth::user()->roles[0]->title == 'Admin' )
 				<li class="nav-title" data-i18n="nav.superadmin">Administrator</li>
-				@endif
+			@endif
 			@can('can_sroot')
-				<li class="nav-title" data-i18n="nav.superadmin">SUPERADMIN</li>
-				<li class="{{ request()->is('sroot/broadcasts*') ? 'active open' : '' }} ">
-					<a href="{{route('sroot.broadcasts.index')}}" title="Create Broadcast Messages"
-						data-filter-tags="info broadcast pengumuman">
-						<i class="fal fa-speaker"></i>
-						<span class="nav-link-text">Broadcasting</span>
-					</a>
-				</li>
+				<li class="nav-title" data-i18n="nav.superadmin">SUPERADMIN</li></li>
 				<li class="{{ request()->is('sroot/gmapapi*') ? 'active open' : '' }} ">
 					<a href="{{route('sroot.gmapapi.edit')}}" title="Goole Map API"
 						data-filter-tags="google map api key">
@@ -88,6 +108,16 @@
 					</a>
 				</li>
 			@endcan
+			@can('broadcast_access')
+				<li class="{{ request()->is('admin/broadcasts*') ? 'active open' : '' }} ">
+					<a href="{{route('admin.broadcasts.index')}}" title="Create Broadcast Messages"
+						data-filter-tags="info broadcast pengumuman">
+						<i class="fal fa-speaker"></i>
+						<span class="nav-link-text">Broadcasting</span>
+					</a>
+				</li>
+			@endcan
+			@can('user_management_access')
 			<li class="{{ request()->is('*/permissions*')
 				|| request()->is('*/roles*') || request()->is('*/users*')
 				|| request()->is('*/audit-logs*') ? 'active open' : '' }} ">
@@ -122,8 +152,16 @@
 							|| request()->is('*/users/*') ? 'active' : '' }}">
 							<a href="{{route('admin.users.index')}}" title="Users Management"
 								data-filter-tags="setting user pengguna">
+								<i class="fa-fw fal fa-user-tie c-sidebar-nav-icon"></i>
+								<span class="nav-link-text">Pelaku Usaha</span>
+							</a>
+						</li>
+						<li class="c-sidebar-nav-item {{ request()->is('*/users')
+							|| request()->is('*/users/*') ? 'active' : '' }}">
+							<a href="{{route('admin.users.index')}}" title="Users Management"
+								data-filter-tags="setting user pengguna">
 								<i class="fa-fw fal fa-user c-sidebar-nav-icon"></i>
-								<span class="nav-link-text">{{ trans('cruds.user.title_lang') }}</span>
+								<span class="nav-link-text">Pengguna Subdit</span>
 							</a>
 						</li>
 					@endcan
@@ -139,6 +177,7 @@
 					@endcan
 				</ul>
 			</li>
+			@endcan
 
 			{{-- logout --}}
 			<li class="c-sidebar-nav-item">

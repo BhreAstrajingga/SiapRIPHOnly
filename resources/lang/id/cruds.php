@@ -74,8 +74,8 @@ return [
 		'level'          => '0',
 	],
 	'pullSync' => [
-		'title'          => 'Tarik Data RIPH',
-		'title_lang'     => 'Tarik Data RIPH',
+		'title'          => 'Sinkronisasi Data',
+		'title_lang'     => 'Sinkronisasi Data',
 		'is_parent'      => '0',
 		'is_hidden'      => '0',
 		'can_view'       => '1',

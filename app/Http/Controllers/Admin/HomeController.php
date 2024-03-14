@@ -24,9 +24,12 @@ class HomeController extends Controller
 		$heading_class = 'fal fa-ballot-check';
 		$quote = Inspiring::quote();
 
-		$roleaccess = Auth::user()->roles[0]->title;
-		$message = BroadcastMessages::where('status', 1)->latest()->first();
+		$roleId = Auth::user()->roles[0]->id;
+		$message = BroadcastMessages::where('status', 1)->where(function ($query) use ($roleId) {
+			$query->where('target', $roleId)
+				  ->orWhere('target', 0);
+		})->latest()->first();
 
-		return view('admin.landing.index', compact('module_name', 'page_title', 'page_heading', 'heading_class', 'quote', 'roleaccess', 'message'));
+		return view('admin.landing.index', compact('module_name', 'page_title', 'page_heading', 'heading_class', 'quote', 'message'));
 	}
 }

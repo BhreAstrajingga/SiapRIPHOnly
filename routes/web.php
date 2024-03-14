@@ -18,6 +18,11 @@ Route::get('/home', function () {
 			return redirect()->route('sroot.home')->with('status', session('status'));
 		}
 		return redirect()->route('sroot.home');
+	}elseif (Auth::user()->roles[0]->id == 2){
+		if (session('status')) {
+			return redirect()->route('importir.home')->with('status', session('status'));
+		}
+		return redirect()->route('importir.home');
 	}
 });
 
@@ -28,12 +33,7 @@ Route::group(['prefix' => 'sroot', 'as' => 'sroot.', 'middleware' => ['auth']], 
 	Route::group(['namespace' => 'Admin'], function () {
 		//Landing
 		Route::get('/', 'HomeController@index')->name('home');
-
 		//broadcasting
-		Route::group(['prefix' => 'broadcasts', 'as' => 'broadcasts.'], function () {
-			Route::get('/', 'BroadcastMessagesController@index')->name('index');
-			Route::get('/{id}/edit', 'BroadcastMessagesController@edit')->name('edit');
-		});
 	});
 	Route::group(['namespace' => 'Sroot'], function () {
 		Route::delete('roles/destroy', 'RolesController@massDestroy')->name('roles.massDestroy');
@@ -56,14 +56,28 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
 		Route::get('/', 'HomeController@index')->name('home');
 		Route::delete('users/destroy', 'UsersController@massDestroy')->name('users.massDestroy');
 		Route::resource('users', 'UsersController');
+		Route::resource('broadcasts', 'BroadcastMessagesController');
+		Route::group(['prefix' => 'broadcasts', 'as' => 'broadcasts.'], function () {
+			Route::put('/{id}/updateStatus', 'BroadcastMessagesController@updateStatus')->name('updateStatus');
+		});
 	});
 });
 
 //route untuk Pelaku usaha
 Route::group(['prefix' => 'importir', 'as' => 'importir.', 'middleware' => ['auth']], function () {
-	Route::group(['namespace' => 'Importir'], function () {
-		// Admin landing
+	Route::group(['namespace' => 'Admin'], function () {
+		// Landing
+		Route::get('/', 'HomeController@index')->name('home');
+	});
 
+	Route::group(['namespace' => 'Importir'], function () {
+		// Commitment
+		Route::group(['prefix' => 'commitment', 'as' => 'commitment.'], function () {
+			Route::get('synchronize', 'PullRiphController@index')->name('pull');
+			Route::get('getriph', 'PullRiphController@pull')->name('pull.getriph');
+			Route::post('pull', 'PullRiphController@store')->name('pull.store');
+			Route::get('/', 'CommitmentController@index')->name('index');
+		});
 	});
 });
 

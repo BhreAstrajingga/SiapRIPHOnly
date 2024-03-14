@@ -28,7 +28,7 @@
 			</div>
 		</div>
 
-		@if($message)
+		@if($message )
 			<div class="alert alert-primary alert-dismissible fade show" role="alert">
 				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 					<span aria-hidden="true"><i class="fal fa-times"></i></span>
@@ -50,20 +50,6 @@
 		@endif
 
 		<div class="row">
-			<div class="col-md-4">
-				<div class="accordion" id="accordion">
-					<div class="panel" id="panel-broadcast">
-						<div class="panel-hdr" data-toggle="collapse" data-target="#row{{$message->id}}" aria-expanded="true">
-							<h5>Accordian</h5>
-						</div>
-						<div class="panel-container show" id="row{{$message->id}}">
-							<div class="panel-content">
-
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
 		</div>
 		<!-- Page Content -->
 	@endcan

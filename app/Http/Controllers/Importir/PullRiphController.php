@@ -1,10 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Importir;
 
-use App\Models\PullRiph;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Gate;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+
+use App\Models\PullRiph;
 use App\Models\AjuVerifProduksi;
 use App\Models\AjuVerifSkl;
 use App\Models\AjuVerifTanam;
@@ -14,12 +21,6 @@ use App\Models\Lokasi;
 use App\Models\MasterAnggota;
 use App\Models\Pks;
 use App\Models\MasterPoktan;
-use Gate;
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 
 class PullRiphController extends Controller
 {
@@ -45,7 +46,7 @@ class PullRiphController extends Controller
 
 		// Cari completed dengan nomor ijin dari $noIjins
 		$completed = Completed::whereIn('no_ijin', $noIjins)->get();
-		return view('admin.pullriph.index', compact('module_name', 'page_title', 'page_heading', 'heading_class', 'npwp_company', 'noIjins', 'ajutanam', 'ajuproduksi', 'ajuskl', 'completed'));
+		return view('importir.pullriph.index', compact('module_name', 'page_title', 'page_heading', 'heading_class', 'npwp_company', 'noIjins', 'ajutanam', 'ajuproduksi', 'ajuskl', 'completed'));
 	}
 
 	public function pull(Request $request)
@@ -70,6 +71,7 @@ class PullRiphController extends Controller
 			);
 
 			$response = $client->__soapCall('get_riph', $parameter);
+
 		} catch (\Exception $e) {
 			$errorMessage = $e->getMessage();
 			// Log pesan kesalahan ke dalam file log laravel
@@ -167,6 +169,7 @@ class PullRiphController extends Controller
 						'npwp' => $stnpwp,
 						'no_ijin' => $noijin,
 					])->forceDelete();
+
 					if (is_array($dtjson->riph->wajib_tanam->kelompoktani->loop)) {
 						// Kelompoktani adalah array
 						foreach ($dtjson->riph->wajib_tanam->kelompoktani->loop as $poktan) {
@@ -197,6 +200,7 @@ class PullRiphController extends Controller
 							$idkelurahan = isset($poktan->id_kelurahan) && is_string($poktan->id_kelurahan) ? trim($poktan->id_kelurahan, ' ') : '';
 
 							MasterPoktan::updateOrCreate(
+
 								[
 									'npwp' => $stnpwp,
 									'poktan_id' => $idpoktan
@@ -367,6 +371,6 @@ class PullRiphController extends Controller
 			Log::error("Error: $errorMessage. Code: " . $e->getCode() . ". Trace: " . $e->getTraceAsString());
 			return redirect()->back()->with('error', 'Pull Store Method. Please Contact Administrator for this error: (' . $errorMessage . ')');
 		}
-		return redirect()->route('admin.task.commitment')->with('success', 'Sukses menyimpan data dan dapat Anda lihat pada daftar di bawah ini.');
+		return redirect()->route('importir.commitment.index')->with('success', 'Sukses menyimpan data dan dapat Anda lihat pada daftar di bawah ini.');
 	}
 }

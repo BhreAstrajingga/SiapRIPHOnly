@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Gate;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Response;
 
 use App\Models\BroadcastMessages;
 
@@ -18,14 +20,15 @@ class BroadcastMessagesController extends Controller
      */
     public function index()
     {
+		abort_if(Gate::denies('broadcast_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $module_name = 'Broadcasts';
 		$page_title = 'Broadcasts Messages';
 		$page_heading = 'Broadcasts Messages';
-		$heading_class = 'fal fa-speaker';
+		$heading_class = 'fal fa-bullhorn';
 
 		$user = Auth::user();
 
-		$messages = BroadcastMessages::all();
+		$messages = BroadcastMessages::orderBy('created_at', 'asc')->get();
 
 		return view('admin.broadcasts.index', compact('module_name', 'page_title', 'page_heading', 'heading_class', 'messages'));
     }
@@ -37,7 +40,7 @@ class BroadcastMessagesController extends Controller
      */
     public function create()
     {
-		abort_if(Auth::user()->roleaccess != 1, Response::HTTP_FORBIDDEN, '403 Forbidden');
+		abort_if(Gate::denies('broadcast_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $module_name = 'Broadcasts';
 		$page_title = 'New Broadcasts Messages';
@@ -55,7 +58,33 @@ class BroadcastMessagesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+		abort_if(Gate::denies('broadcast_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+		$request->validate([
+			'title' => 'required|string|max:255',
+			'messages' => 'required|string',
+			'type' => 'required|string|max:15',
+			'target' => 'required|integer',
+		]);
+
+		$userId = Auth::user()->id;
+		DB::beginTransaction();
+		try {
+			BroadcastMessages::create(
+				[
+					'title' => $request->input('title'),
+					'messages' => $request->input('messages'),
+					'type' => $request->input('type'),
+					'target' => $request->input('target'),
+					'user_id' => $userId,
+				]
+			);
+			DB::commit();
+		} catch (\Throwable $th) {
+			DB::rollback();
+			$pesanError = 'Gagal menyimpan data. ' . $th->getMessage();
+			return redirect()->back()->with('error', $pesanError);
+		}
+		return redirect()->route('admin.broadcasts.index')->with('success', 'Pengumuman berhasil dibuat.');
     }
 
     /**
@@ -77,8 +106,7 @@ class BroadcastMessagesController extends Controller
      */
     public function edit($id)
     {
-        // abort_if(Auth::user()->roleaccess != 1, Response::HTTP_FORBIDDEN, '403 Forbidden');
-		// abort_if(Auth::user()->id != $message->user_id, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('broadcast_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 		$message = BroadcastMessages::find($id);
 
         $module_name = 'Broadcasts';
@@ -96,10 +124,55 @@ class BroadcastMessagesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+	public function update(Request $request, $id)
+	{
+		abort_if(Gate::denies('broadcast_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+		$request->validate([
+			'title' => 'required|string|max:255',
+			'messages' => 'required|string',
+			'type' => 'required|string|max:15',
+			'target' => 'required|integer',
+		]);
+
+		$userId = Auth::user()->id;
+
+		DB::beginTransaction();
+
+		try {
+			// Temukan data yang akan diperbarui berdasarkan ID
+			$broadcastMessage = BroadcastMessages::findOrFail($id);
+
+			// Perbarui data
+			$broadcastMessage->update([
+				'title' => $request->input('title'),
+				'messages' => $request->input('messages'),
+				'type' => $request->input('type'),
+				'target' => $request->input('target'),
+				'user_id' => $userId,
+			]);
+
+			DB::commit();
+		} catch (\Throwable $th) {
+			DB::rollback();
+			$pesanError = 'Gagal menyimpan data. ' . $th->getMessage();
+			return redirect()->back()->with('error', $pesanError);
+		}
+
+		return redirect()->back()->with('success', 'Pengumuman berhasil diperbarui.');
+	}
+
+	public function updateStatus(Request $request, $id)
+	{
+		$message = BroadcastMessages::findOrFail($id);
+
+		// Toggle the status
+		$message->status = $message->status === 1 ? 0 : 1;
+		$message->save();
+
+		return response()->json(['message' => 'Status updated successfully']);
+	}
+
 
     /**
      * Remove the specified resource from storage.
@@ -108,7 +181,25 @@ class BroadcastMessagesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
-    {
-        //
-    }
+	{
+		abort_if(Gate::denies('broadcast_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+		DB::beginTransaction();
+
+		try {
+			// Temukan data yang akan dihapus berdasarkan ID
+			$broadcastMessage = BroadcastMessages::findOrFail($id);
+
+			// Hapus data
+			$broadcastMessage->delete();
+
+			DB::commit();
+		} catch (\Throwable $th) {
+			DB::rollback();
+			$pesanError = 'Gagal menghapus data. ' . $th->getMessage();
+			return redirect()->back()->with('error', $pesanError);
+		}
+
+		return redirect()->route('admin.broadcasts.index')->with('success', 'Pengumuman berhasil dibuat.');
+	}
 }

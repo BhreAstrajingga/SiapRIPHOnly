@@ -10,7 +10,7 @@
 <div class="row">
 	<div class="col-12">
 		@include('partials.sysalert')
-		<form  id="dataForm" action="{{ route('admin.task.pull.store') }}" method="POST" enctype="multipart/form-data">
+		<form  id="dataForm" action="{{ route('importir.commitment.pull.store') }}" method="POST" enctype="multipart/form-data">
 		@csrf
 			<div class="text-center">
 				<i class="fa fa-sync-alt fa-3x text-primary"></i>
@@ -46,7 +46,7 @@
 						</div>
 
 						<a class="btn btn-sm btn-primary btn-block text-white"  id="btnexec" >
-							<i class="fas fa-sync"></i> Tarik Sekarang
+							<i class="fas fa-sync"></i> Periksa Data di SIAP RIPH
 						</a>
 					</div>
 				</div>
@@ -312,22 +312,19 @@
 		$("#btnexec").on('click', function(){
 			stnpwp = $("#npwp").val().replace(/[\.,-]+/g,'');
 			stnomor = $("#nomor").val();
-			// Periksa apakah nomor sudah ada di $noIjins
 			var isNomorExists = false;
 
-			//$noIjins
 			$.each(<?php echo json_encode($noIjins); ?>, function(index, value) {
 				if(value.no_ijin === stnomor) {
 					isNomorExists = true;
-					return false; // Berhenti loop karena nomor sudah ditemukan
+					return false;
 				}
 			});
 
 			if(isNomorExists) {
-				// Jika nomor sudah terdaftar, tampilkan pesan kepada pengguna
+
 				var confirmMessage = confirm("Nomor tersebut sudah terdaftar. Jika Anda melanjutkan, data yang telah tersimpan akan terhapus dan digantikan dengan data yang baru. Apakah Anda ingin melanjutkan?");
 				if(!confirmMessage) {
-					// Jika pengguna membatalkan, hentikan proses
 					return false;
 				}
 			}
@@ -357,7 +354,7 @@
 			}
 
 			$.ajax ({
-				url: "{{ route('admin.task.pull.getriph') }}",
+				url: "{{ route('importir.commitment.pull.getriph') }}",
 				type: 'get',
 				data: {npwp: stnpwp, nomor: stnomor},
 				success: function(response){

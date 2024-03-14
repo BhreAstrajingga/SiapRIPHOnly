@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Importir;
 
 use App\Http\Controllers\Controller;
 use App\Models\PullRiph;
@@ -88,7 +88,7 @@ class CommitmentController extends Controller
 			// $countLokasi = $commitment->lokasi->count('id');
 			// dd($countLokasi);
 		}
-		return view('admin.commitment.index', compact('module_name', 'page_title', 'page_heading', 'heading_class', 'npwp_company', 'commitments', 'pksCount', 'pksFileCount'));
+		return view('importir.commitment.index', compact('module_name', 'page_title', 'page_heading', 'heading_class', 'npwp_company', 'commitments', 'pksCount', 'pksFileCount'));
 	}
 
 	public function show($id)
@@ -101,10 +101,8 @@ class CommitmentController extends Controller
 		$page_heading = 'Data Komitmen: ' . $commitment->no_ijin;
 		$heading_class = 'fal fa-file-edit';
 
-		return view('admin.commitment.show', compact('module_name', 'page_title', 'page_heading', 'heading_class', 'npwp_company', 'commitment'));
+		return view('importir.commitment.show', compact('module_name', 'page_title', 'page_heading', 'heading_class', 'npwp_company', 'commitment'));
 	}
-
-
 
 	public function realisasi($id)
 	{
@@ -152,7 +150,7 @@ class CommitmentController extends Controller
 		} else {
 			$disabled = true; // input di-disable
 		}
-		return view('admin.commitment.realisasi', compact('module_name', 'page_title', 'page_heading', 'heading_class', 'commitment', 'pkss', 'penangkars', 'docs', 'npwp', 'varietass', 'disabled'));
+		return view('importir.commitment.realisasi', compact('module_name', 'page_title', 'page_heading', 'heading_class', 'commitment', 'pkss', 'penangkars', 'docs', 'npwp', 'varietass', 'disabled'));
 	}
 
 	public function storeUserDocs(Request $request, $id)
@@ -237,7 +235,7 @@ class CommitmentController extends Controller
 		$total_luastanam = $commitment->datarealisasi->sum('luas_lahan');
 		$total_volume = $commitment->datarealisasi->sum('volume');
 		// dd($total_volume);
-		return view('admin.commitment.realisasi', compact('module_name', 'page_title', 'page_heading', 'heading_class'));
+		return view('importir.commitment.realisasi', compact('module_name', 'page_title', 'page_heading', 'heading_class'));
 	}
 
 
