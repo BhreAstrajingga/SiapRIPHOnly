@@ -32,7 +32,7 @@ td {
 							@foreach ($commitments as $commitment)
 							<tr>
 								<td>
-									<a href="" title="Lihat Data Komitmen" target="_blank">
+									<a href="{{route('importir.commitment.show', $commitment->noIjinLink)}}" title="Lihat Data Komitmen" target="_blank">
 										{{$commitment->no_ijin}}
 									</a>
 								</td>
@@ -58,7 +58,7 @@ td {
 									</div>
 								</td>
 								<td class="text-center">
-									<a href=""
+									<a href="{{route('importir.commitment.realisasi', $commitment->noIjinLink)}}"
 										class="btn btn-icon btn-xs btn-primary" data-toggle="tooltip"
 										title data-original-title="Isi Laporan Realisasi Tanam dan Produksi">
 										<i class="fal fa-edit"></i>
@@ -66,38 +66,94 @@ td {
 								</td>
 								{{-- tanam --}}
 								<td class="text-center">
-									{{-- @if ($pksFileCount == $pksCount) --}}
-										@if (!empty($commitment->userDocs->sptjmtanam))
-											{{-- Tanam --}}
-											@if (!empty($commitment->userDocs->spvt) && !empty($commitment->userDocs->rta))
-												@if(!$commitment->ajuTanam)
+									@if (!empty($commitment->userDocs->sptjmtanam))
+										{{-- Tanam --}}
+										@if (!empty($commitment->userDocs->spvt) && !empty($commitment->userDocs->rta))
+											@if(!$commitment->ajuTanam)
+												@if (!$commitment->ajuskl || in_array(!$commitment->ajuskl->status, [1, 2, 3, 4]))
+													<a href=""
+														class="btn btn-xs btn-danger btn-icon" data-toggle="tooltip"
+														title data-original-title="Ajukan Verifikasi Tanam">
+														<i class="fal fa-upload"></i>
+													</a>
+												@endif
+											@elseif($commitment->ajuTanam->status === '1')
+												<a href=""
+													class="btn btn-xs btn-info btn-icon" data-toggle="tooltip"
+													title data-original-title="Verifikasi tanam telah diajukan. Klik untuk Lihat data pengajuan.">
+													<i class="fal fa-upload"></i>
+												</a>
+											@elseif($commitment->ajuTanam->status === '2' || $commitment->ajuTanam->status === '3')
+												<a href=""
+													class="btn btn-xs btn-warning btn-icon" data-toggle="tooltip"
+													title data-original-title="Proses pemeriksaan berkas. Klik untuk Lihat data.">
+													<i class="fal fa-clipboard-list-check"></i>
+												</a>
+											@elseif($commitment->ajuTanam->status === '4')
+												<a href="" class="btn btn-xs btn-success btn-icon" data-toggle="tooltip"
+												title data-original-title="Verifikasi Tanam selesai. Klik untuk Lihat hasil.">
+													<i class="fal fa-check"></i>
+												</a>
+											@elseif($commitment->ajuTanam->status === '5')
+												<div class="dropdown">
+													<a href="#" class="btn btn-danger btn-xs btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Perbaiki data dan laporan">
+														<i class="fa fa-exclamation"></i>
+													</a>
+													<div class="dropdown-menu">
+														<a class="dropdown-item" style="text-decoration: none !important;" href="" target="_blank">
+															Lihat Hasil Verifikasi
+														</a >
+														<a class="dropdown-item" style="text-decoration: none !important;" href="" target="_blank" data-toggle="tooltip"
+															title data-original-title="Perbaiki data dan laporan. Lalu ajukan verifikasi ulang.">
+															Ajukan Ulang
+														</a>
+													</div>
+												</div>
+											@endif
+										@else
+											<span id="syaratTanam" data-toggle="modal" data-target="#syaratModal" title="Klik untuk melihat syarat pengajuan Keterangan Lunas.">
+												<i class="fas fa-info-circle text-info"></i>
+											</span>
+										@endif
+									@else
+										-
+									@endif
+								</td>
+								{{-- produksi --}}
+								<td class="text-center">
+									@if (!empty($commitment->userDocs->sptjmproduksi))
+										{{-- produksi --}}
+										@if (!empty($commitment->userDocs->spvp) && !empty($commitment->userDocs->rpo))
+											@if ($commitment->sumVolume >= $commitment->minThresholdProd)
+												@if(!$commitment->ajuProduksi)
 													@if (!$commitment->ajuskl || in_array(!$commitment->ajuskl->status, [1, 2, 3, 4]))
 														<a href=""
-															class="btn btn-xs btn-danger btn-icon" data-toggle="tooltip"
-															title data-original-title="Ajukan Verifikasi Tanam">
+															class="btn btn-xs btn-warning btn-icon" data-toggle="tooltip"
+															title data-original-title="Ajukan Verifikasi Produksi">
 															<i class="fal fa-upload"></i>
 														</a>
 													@endif
-												@elseif($commitment->ajuTanam->status === '1')
+												@elseif($commitment->ajuProduksi->status === '1')
 													<a href=""
 														class="btn btn-xs btn-info btn-icon" data-toggle="tooltip"
-														title data-original-title="Verifikasi tanam telah diajukan. Klik untuk Lihat data pengajuan.">
+														title data-original-title="Verifikasi produksi telah diajukan. Klik untuk Lihat data pengajuan.">
 														<i class="fal fa-upload"></i>
 													</a>
-												@elseif($commitment->ajuTanam->status === '2' || $commitment->ajuTanam->status === '3')
-													<a href=""
-														class="btn btn-xs btn-warning btn-icon" data-toggle="tooltip"
-														title data-original-title="Proses pemeriksaan berkas. Klik untuk Lihat data.">
-														<i class="fal fa-clipboard-list-check"></i>
+												@elseif($commitment->ajuProduksi->status === '2' || $commitment->ajuProduksi->status === '3')
+													<a href="
+														class="btn btn-xs btn-info btn-icon" data-toggle="tooltip"
+														title data-original-title="Proses pemeriksaan berkas. Klik untuk Lihat data pengajuan.">
+														<i class="fal fa-upload"></i>
 													</a>
-												@elseif($commitment->ajuTanam->status === '4')
-													<a href="" class="btn btn-xs btn-success btn-icon" data-toggle="tooltip"
-													title data-original-title="Verifikasi Tanam selesai. Klik untuk Lihat hasil.">
+												@elseif($commitment->ajuProduksi->status === '4')
+													<a href=""
+														class="btn btn-xs btn-success btn-icon" data-toggle="tooltip"
+														title data-original-title="Verifikasi Produksi selesai. Klik untuk Lihat data pengajuan.">
 														<i class="fal fa-check"></i>
 													</a>
-												@elseif($commitment->ajuTanam->status === '5')
+												@elseif($commitment->ajuProduksi->status === '5')
 													<div class="dropdown">
-														<a href="#" class="btn btn-danger btn-xs btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Perbaiki data dan laporan">
+														<a href="#" class="btn btn-danger btn-xs btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
 															<i class="fa fa-exclamation"></i>
 														</a>
 														<div class="dropdown-menu">
@@ -111,134 +167,66 @@ td {
 														</div>
 													</div>
 												@endif
-											@else
-												<span id="syaratTanam" data-toggle="modal" data-target="#syaratModal" title="Klik untuk melihat syarat pengajuan Keterangan Lunas.">
-													<i class="fas fa-info-circle text-info"></i>
-												</span>
-											@endif
-										@else
-											<span id="syaratTanam" data-toggle="modal" data-target="#syaratModal" title="Klik untuk melihat syarat pengajuan verifikasi.">
-												<i class="fas fa-info-circle text-info"></i>
-											</span>
-										@endif
-									{{-- @endif --}}
-								</td>
-								{{-- produksi --}}
-								<td class="text-center">
-									{{-- @if ($pksFileCount == $pksCount) --}}
-										@if (!empty($commitment->userDocs->sptjmproduksi))
-											{{-- produksi --}}
-											@if (!empty($commitment->userDocs->spvp) && !empty($commitment->userDocs->rpo))
-												@if ($commitment->sumVolume >= $commitment->minThresholdProd)
-													@if(!$commitment->ajuProduksi)
-														@if (!$commitment->ajuskl || in_array(!$commitment->ajuskl->status, [1, 2, 3, 4]))
-															<a href=""
-																class="btn btn-xs btn-warning btn-icon" data-toggle="tooltip"
-																title data-original-title="Ajukan Verifikasi Produksi">
-																<i class="fal fa-upload"></i>
-															</a>
-														@endif
-													@elseif($commitment->ajuProduksi->status === '1')
-														<a href=""
-															class="btn btn-xs btn-info btn-icon" data-toggle="tooltip"
-															title data-original-title="Verifikasi produksi telah diajukan. Klik untuk Lihat data pengajuan.">
-															<i class="fal fa-upload"></i>
-														</a>
-													@elseif($commitment->ajuProduksi->status === '2' || $commitment->ajuProduksi->status === '3')
-														<a href="
-															class="btn btn-xs btn-info btn-icon" data-toggle="tooltip"
-															title data-original-title="Proses pemeriksaan berkas. Klik untuk Lihat data pengajuan.">
-															<i class="fal fa-upload"></i>
-														</a>
-													@elseif($commitment->ajuProduksi->status === '4')
-														<a href=""
-															class="btn btn-xs btn-success btn-icon" data-toggle="tooltip"
-															title data-original-title="Verifikasi Produksi selesai. Klik untuk Lihat data pengajuan.">
-															<i class="fal fa-check"></i>
-														</a>
-													@elseif($commitment->ajuProduksi->status === '5')
-														<div class="dropdown">
-															<a href="#" class="btn btn-danger btn-xs btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
-																<i class="fa fa-exclamation"></i>
-															</a>
-															<div class="dropdown-menu">
-																<a class="dropdown-item" style="text-decoration: none !important;" href="" target="_blank">
-																	Lihat Hasil Verifikasi
-																</a >
-																<a class="dropdown-item" style="text-decoration: none !important;" href="" target="_blank" data-toggle="tooltip"
-																	title data-original-title="Perbaiki data dan laporan. Lalu ajukan verifikasi ulang.">
-																	Ajukan Ulang
-																</a>
-															</div>
-														</div>
-													@endif
-												@endif
-											@else
-												<span id="syaratProduksi" data-toggle="modal" data-target="#syaratModal" title="Klik untuk melihat syarat pengajuan Verifikasi Realisasi Komitmen Wajib Produksi.">
-													<i class="fas fa-info-circle text-info"></i>
-												</span>
 											@endif
 										@else
 											<span id="syaratProduksi" data-toggle="modal" data-target="#syaratModal" title="Klik untuk melihat syarat pengajuan Verifikasi Realisasi Komitmen Wajib Produksi.">
 												<i class="fas fa-info-circle text-info"></i>
 											</span>
 										@endif
-									{{-- @endif --}}
+									@else
+										-
+									@endif
 								</td>
 								<td class="text-center">
-									{{-- @if ($pksFileCount == $pksCount) --}}
-										@if (!empty($commitment->userDocs->sptjmproduksi))
-											{{-- skl --}}
-											@if ($commitment->ajuProduksi && $commitment->ajuProduksi->status === '4')
-												@if(!$commitment->ajuSkl)
-													<a href=""
-														class="btn btn-xs btn-warning btn-icon" data-toggle="tooltip"
-														title data-original-title="Ajukan Penerbitan SKL">
-														<i class="fal fa-upload"></i>
+									@if (!empty($commitment->userDocs->sptjmproduksi))
+										{{-- skl --}}
+										@if ($commitment->ajuProduksi && $commitment->ajuProduksi->status === '4')
+											@if(!$commitment->ajuSkl)
+												<a href=""
+													class="btn btn-xs btn-warning btn-icon" data-toggle="tooltip"
+													title data-original-title="Ajukan Penerbitan SKL">
+													<i class="fal fa-upload"></i>
+												</a>
+											@elseif($commitment->ajuSkl->status === '1')
+												<a href="" class="btn btn-xs btn-info btn-icon" data-toggle="tooltip" title data-original-title="Penerbitan SKL sudah diajukan">
+													<i class="fal fa-upload"></i>
+												</a>
+											@elseif($commitment->ajuSkl->status === '2')
+												<a href="" class="btn btn-xs btn-info btn-icon" data-toggle="tooltip" title data-original-title="Rekomendasi Penerbitan SKL">
+													<i class="fal fa-search"></i>
+												</a>
+											@elseif($commitment->ajuSkl->status === '3')
+												<a href="" class="btn btn-xs btn-info btn-icon" data-toggle="tooltip" title data-original-title="SKL Disetujui untuk Diterbitkan">
+													<i class="fal fa-thumbs-up"></i>
+												</a>
+											@elseif($commitment->ajuSkl->status === '4')
+												<a href="" class="btn btn-xs btn-info btn-icon" data-toggle="tooltip" title data-original-title="SKL sudah Terbit. Klik untuk melihat Ringkasan Verifikasi.">
+													<i class="fal fa-award"></i>
+												</a>
+											@elseif($commitment->ajuSkl->status === '5')
+												<div class="dropdown">
+													<a href="#" class="btn btn-danger btn-xs btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+														<i class="fa fa-exclamation"></i>
 													</a>
-												@elseif($commitment->ajuSkl->status === '1')
-													<a href="" class="btn btn-xs btn-info btn-icon" data-toggle="tooltip" title data-original-title="Penerbitan SKL sudah diajukan">
-														<i class="fal fa-upload"></i>
-													</a>
-												@elseif($commitment->ajuSkl->status === '2')
-													<a href="" class="btn btn-xs btn-info btn-icon" data-toggle="tooltip" title data-original-title="Rekomendasi Penerbitan SKL">
-														<i class="fal fa-search"></i>
-													</a>
-												@elseif($commitment->ajuSkl->status === '3')
-													<a href="" class="btn btn-xs btn-info btn-icon" data-toggle="tooltip" title data-original-title="SKL Disetujui untuk Diterbitkan">
-														<i class="fal fa-thumbs-up"></i>
-													</a>
-												@elseif($commitment->ajuSkl->status === '4')
-													<a href="" class="btn btn-xs btn-info btn-icon" data-toggle="tooltip" title data-original-title="SKL sudah Terbit. Klik untuk melihat Ringkasan Verifikasi.">
-														<i class="fal fa-award"></i>
-													</a>
-												@elseif($commitment->ajuSkl->status === '5')
-													<div class="dropdown">
-														<a href="#" class="btn btn-danger btn-xs btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
-															<i class="fa fa-exclamation"></i>
+													<div class="dropdown-menu dropdown-menu-right">
+														<a class="dropdown-item" style="text-decoration: none !important;" href="" target="_blank">
+															Lihat Hasil Verifikasi
+														</a >
+														<a class="dropdown-item" style="text-decoration: none !important;" href="" target="_blank" data-toggle="tooltip"
+															title data-original-title="Perbaiki data dan laporan. Lalu ajukan verifikasi ulang.">
+															Ajukan Ulang
 														</a>
-														<div class="dropdown-menu dropdown-menu-right">
-															<a class="dropdown-item" style="text-decoration: none !important;" href="" target="_blank">
-																Lihat Hasil Verifikasi
-															</a >
-															<a class="dropdown-item" style="text-decoration: none !important;" href="" target="_blank" data-toggle="tooltip"
-																title data-original-title="Perbaiki data dan laporan. Lalu ajukan verifikasi ulang.">
-																Ajukan Ulang
-															</a>
-														</div>
 													</div>
-												@endif
-											@else
-												<span id="syaratSkl" data-toggle="modal" data-target="#syaratModal" title="Klik untuk melihat syarat pengajuan Keterangan Lunas.">
-													<i class="fas fa-info-circle text-info"></i>
-												</span>
+												</div>
 											@endif
 										@else
 											<span id="syaratSkl" data-toggle="modal" data-target="#syaratModal" title="Klik untuk melihat syarat pengajuan Keterangan Lunas.">
 												<i class="fas fa-info-circle text-info"></i>
 											</span>
 										@endif
-									{{-- @endif --}}
+									@else
+										-
+									@endif
 								</td>
 							</tr>
 							@endforeach

@@ -13,7 +13,7 @@
         "fideloper/proxy": "^4.4",
         "guzzlehttp/guzzle": "^7.5",
         "laravel/framework": "^9.0",
-        "laravel/sanctum": "^2.14",
+        "laravel/sanctum": "^3.5",
         "laravel/tinker": "^2.7",
         "laraveldaily/laravel-charts": "^0.1.29",
         "nuovo/spreadsheet-reader": "^0.5.11",

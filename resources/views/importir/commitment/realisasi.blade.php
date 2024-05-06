@@ -23,7 +23,7 @@
 							<div class="flex-1">
 								<small><span class="mr-1 fw-500">INFORMASI!</span>Anda dapat mengisi data Realisasi Komitmen Tanam dan Produksi setelah melengkapi data Perjanjian Kerjasama.</small>
 							</div>
-							<a href="{{route('admin.task.commitment')}}" class="btn btn-info btn-xs btn-w-m waves-effect waves-themed">Kembali</a>
+							<a href="{{route('importir.commitment.index')}}" class="btn btn-info btn-xs btn-w-m waves-effect waves-themed">Kembali</a>
 						</div>
 					</div>
 				</div>
@@ -93,7 +93,7 @@
 															<span aria-hidden="true">&times;</span>
 														</button>
 													</div>
-													<form action=" {{route('admin.task.pks.update', $pks->id)}} " method="POST" enctype="multipart/form-data">
+													<form action="" method="POST" enctype="multipart/form-data">
 														@csrf
 														@method('PUT')
 														<div class="modal-body">
@@ -248,7 +248,7 @@
 			</div>
 		</div>
 		<div class="tab-pane fade" id="panel-6" role="tabpanel" aria-labelledby="panel-6">
-			<form action="{{route('admin.task.commitment.realisasi.storeUserDocs', $commitment->id)}}" method="post" enctype="multipart/form-data" id="docsUpload">
+			<form action="" method="post" enctype="multipart/form-data" id="docsUpload">
 					@csrf
 				<div class="row mb-3">
 					<div class="col-12">
@@ -258,7 +258,7 @@
 								<div class="flex-1 text-danger">
 									<small><span class="mr-1 fw-700">PERHATIAN!</span>Seluruh Dokumen Tanam & Produksi harus diunggah sebelum <span class="fw-700 text-uppercase">Pengajuan Surat Keterangan Lunas</span> dilakukan.</small>
 								</div>
-								<a href="{{route('admin.task.commitment')}}" class="mr-1 btn btn-info btn-xs btn-w-m waves-effect waves-themed">Kembali</a>
+								<a href="{{route('importir.commitment.index')}}" class="mr-1 btn btn-info btn-xs btn-w-m waves-effect waves-themed">Kembali</a>
 								<!-- Button trigger modal -->
 								<button type="button" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#modelId">
 									Perlu Bantuan ?

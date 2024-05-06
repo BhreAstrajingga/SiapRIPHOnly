@@ -42,8 +42,17 @@
 						</span>
 					</div>
 					<div class="flex-1">
-						<strong class="text-uppercase fw-700 text-{{$message->type}}">{{$message->title}} </strong> <br>
-						{{$message->messages}}
+						<strong class="text-uppercase fw-700 text-{{$message->type}}">
+							{{$message->title}}
+						</strong> <br>
+						Kepada
+						@if ($message->target === 0) <strong>Semua Pengguna</strong>.
+						@elseif ($message->target === 1) <strong>Administrator</strong>.
+						@elseif ($message->target === 2) <strong>Para Pelaku Usaha</strong>.
+						@elseif ($message->target === 3) <strong>Para Verifikator</strong>.
+						@endif
+						{{$message->messages}} <br>
+
 					</div>
 				</div>
 			</div>

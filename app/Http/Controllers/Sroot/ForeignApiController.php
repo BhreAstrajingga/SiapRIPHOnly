@@ -90,10 +90,23 @@ class ForeignApiController extends Controller
     public function update(Request $request)
     {
         abort_if(Auth::user()->roleaccess != 1, Response::HTTP_FORBIDDEN, '403 Forbidden');
-		$key = ForeignApi::findOrFail(1);
-		$key->key = $request->input('apikey');
-		$key->save();
-		return redirect()->route('Superadmin.gmapapi.edit')->with('success', 'Google map API berhasil diperbarui');
+		$request->validate([
+			'apikey' => 'required|string|max:255',
+		]);
+
+		try {
+			DB::beginTransaction();
+				$apikey = strip_tags($request->input('apikey'));
+				$key = ForeignApi::findOrFail(1);
+				$key->key = $apikey;
+				$key->save();
+			DB::commit();
+		} catch (\Throwable $th) {
+			DB::rollback();
+			$pesanError = 'Gagal menyimpan data. ' . $th->getMessage();
+			return redirect()->back()->with('error', $pesanError);
+		}
+		return redirect()->route('sroot.gmapapi.edit')->with('success', 'Google map API berhasil diperbarui');
     }
 
     /**

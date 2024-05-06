@@ -58,21 +58,24 @@ class BroadcastMessagesController extends Controller
      */
     public function store(Request $request)
     {
-		abort_if(Gate::denies('broadcast_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+		abort_if(Gate::denies('broadcast_access'), Response::HTTP_FORBIDDEN, '403 Forbidden. Akses ditolak');
 		$request->validate([
 			'title' => 'required|string|max:255',
 			'messages' => 'required|string',
-			'type' => 'required|string|max:15',
-			'target' => 'required|integer',
+			'type' => 'required|string|max:15|in:info,warning,danger',
+			'target' => 'required|integer|in:0,1,2,3',
 		]);
 
-		$userId = Auth::user()->id;
-		DB::beginTransaction();
 		try {
+			DB::beginTransaction();
+			$userId = Auth::user()->id;
+			$title = strip_tags($request->input('title'));
+			$messages = strip_tags($request->input('messages'));
+
 			BroadcastMessages::create(
 				[
-					'title' => $request->input('title'),
-					'messages' => $request->input('messages'),
+					'title' => $title,
+					'messages' => $messages,
 					'type' => $request->input('type'),
 					'target' => $request->input('target'),
 					'user_id' => $userId,
@@ -84,7 +87,12 @@ class BroadcastMessagesController extends Controller
 			$pesanError = 'Gagal menyimpan data. ' . $th->getMessage();
 			return redirect()->back()->with('error', $pesanError);
 		}
-		return redirect()->route('admin.broadcasts.index')->with('success', 'Pengumuman berhasil dibuat.');
+		$feedbackMessage = 'Pengumuman berhasil dibuat';
+		if (Auth::user()->roles[0]->id === 7) {
+			return redirect()->route('sroot.broadcasts.index')->with('success', $feedbackMessage);
+		}else{
+			return redirect()->route('admin.broadcasts.index')->with('success', $feedbackMessage);
+		}
     }
 
     /**
@@ -131,22 +139,23 @@ class BroadcastMessagesController extends Controller
 		$request->validate([
 			'title' => 'required|string|max:255',
 			'messages' => 'required|string',
-			'type' => 'required|string|max:15',
-			'target' => 'required|integer',
+			'type' => 'required|string|max:15|in:info,warning,danger',
+			'target' => 'required|integer|in:0,1,2,3',
 		]);
 
 		$userId = Auth::user()->id;
-
-		DB::beginTransaction();
-
 		try {
+			DB::beginTransaction();
+			$userId = Auth::user()->id;
+			$title = strip_tags($request->input('title'));
+			$messages = strip_tags($request->input('messages'));
 			// Temukan data yang akan diperbarui berdasarkan ID
 			$broadcastMessage = BroadcastMessages::findOrFail($id);
 
 			// Perbarui data
 			$broadcastMessage->update([
-				'title' => $request->input('title'),
-				'messages' => $request->input('messages'),
+				'title' => $title,
+				'messages' => $messages,
 				'type' => $request->input('type'),
 				'target' => $request->input('target'),
 				'user_id' => $userId,
@@ -164,6 +173,8 @@ class BroadcastMessagesController extends Controller
 
 	public function updateStatus(Request $request, $id)
 	{
+		abort_if(Gate::denies('broadcast_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
 		$message = BroadcastMessages::findOrFail($id);
 
 		// Toggle the status
@@ -174,23 +185,14 @@ class BroadcastMessagesController extends Controller
 	}
 
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
 	{
 		abort_if(Gate::denies('broadcast_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
 		DB::beginTransaction();
-
 		try {
-			// Temukan data yang akan dihapus berdasarkan ID
 			$broadcastMessage = BroadcastMessages::findOrFail($id);
 
-			// Hapus data
 			$broadcastMessage->delete();
 
 			DB::commit();
@@ -200,6 +202,11 @@ class BroadcastMessagesController extends Controller
 			return redirect()->back()->with('error', $pesanError);
 		}
 
-		return redirect()->route('admin.broadcasts.index')->with('success', 'Pengumuman berhasil dibuat.');
+		$feedbackMessage = 'Pengumuman berhasil dihapus';
+		if (Auth::user()->roles[0]->id === 7) {
+			return redirect()->route('sroot.broadcasts.index')->with('success', $feedbackMessage);
+		}else{
+			return redirect()->route('admin.broadcasts.index')->with('success', $feedbackMessage);
+		}
 	}
 }

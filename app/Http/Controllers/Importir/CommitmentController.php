@@ -43,26 +43,11 @@ class CommitmentController extends Controller
 			->with('skl')
 			->select('id', 'no_ijin', 'periodetahun', 'tgl_ijin', 'volume_riph', 'luas_wajib_tanam', 'volume_produksi')
 			->get();
-		// dd($commitments);
-		$pksCount = 0; // Initialize with a default value
-		$pksFileCount = 0; // Initialize with a default value
 
 		if ($commitments) {
 			foreach ($commitments as $commitment) {
-				$sumLuas = $commitment->datarealisasi->sum('luas_lahan');
-				$sumVolume = $commitment->datarealisasi->sum('volume');
-				$minThresholdTanam = $commitment->luas_wajib_tanam;
-				$minThresholdProd = $commitment->volume_produksi;
+				$noIjinLink = str_replace(['/', '.'], '', $commitment->no_ijin);
 
-				$commitment->sumLuas = $sumLuas;
-				$commitment->sumVolume = $sumVolume;
-				$commitment->minThresholdTanam = $minThresholdTanam;
-				$commitment->minThresholdProd = $minThresholdProd;
-				$thesePks = Pks::where('no_ijin', $commitment->no_ijin)->select('id', 'berkas_pks')->get();
-				$pksCount = $thesePks->count();
-				$pksFileCount = $thesePks
-					->whereNotNull('berkas_pks')
-					->count();
 				$userDocs = UserDocs::where('no_ijin', $commitment->no_ijin)
 					->first();
 
@@ -75,26 +60,28 @@ class CommitmentController extends Controller
 				$ajuSkl = AjuVerifSkl::where('no_ijin', $commitment->no_ijin)->select('status')
 					->first();
 
-				// $skl = Skl::where('no_ijin', $commitment->no_ijin)->first();
-
-				// Add userDocs to the commitment
 				$commitment->userDocs = $userDocs;
 				$commitment->ajuTanam = $ajuTanam;
 				$commitment->ajuProduksi = $ajuProduksi;
 				$commitment->ajuSkl = $ajuSkl;
-				// $commitment->skl = $skl;
+				$commitment->noIjinLink = $noIjinLink;
 			}
-
-			// $countLokasi = $commitment->lokasi->count('id');
-			// dd($countLokasi);
 		}
-		return view('importir.commitment.index', compact('module_name', 'page_title', 'page_heading', 'heading_class', 'npwp_company', 'commitments', 'pksCount', 'pksFileCount'));
+
+		return view('importir.commitment.index', compact('module_name', 'page_title', 'page_heading', 'heading_class', 'npwp_company', 'commitments'));
 	}
 
-	public function show($id)
+	public function show($no_ijin)
 	{
 		$npwp_company = Auth::user()->data_user->npwp_company;
-		$commitment = PullRiph::where('npwp', $npwp_company)->findOrFail($id);
+		$formattedNoIjin = substr_replace($no_ijin, '/', 4, 0); // Memasukkan '/' setelah 4 karakter pertama
+		$formattedNoIjin = substr_replace($formattedNoIjin, '.', 7, 0); // Memasukkan '.' setelah karakter ke-7
+		$formattedNoIjin = substr_replace($formattedNoIjin, '/', 11, 0); // Memasukkan '/' setelah karakter ke-10
+		$formattedNoIjin = substr_replace($formattedNoIjin, '/', 13, 0);
+		$formattedNoIjin = substr_replace($formattedNoIjin, '/', 16, 0);
+		// dd($formattedNoIjin);
+		$commitment = PullRiph::where('npwp', $npwp_company)
+			->where('no_ijin', $formattedNoIjin)->firstOrFail();
 
 		$module_name = 'Komitmen';
 		$page_title = 'Data Komitmen';
@@ -104,16 +91,20 @@ class CommitmentController extends Controller
 		return view('importir.commitment.show', compact('module_name', 'page_title', 'page_heading', 'heading_class', 'npwp_company', 'commitment'));
 	}
 
-	public function realisasi($id)
+	public function realisasi($no_ijin)
 	{
 		$module_name = 'Komitmen';
 		$page_title = 'Data Realisasi';
 		$page_heading = 'Realisasi Komitmen';
 		$heading_class = 'fal fa-file-edit';
-
+		$formattedNoIjin = substr_replace($no_ijin, '/', 4, 0); // Memasukkan '/' setelah 4 karakter pertama
+		$formattedNoIjin = substr_replace($formattedNoIjin, '.', 7, 0); // Memasukkan '.' setelah karakter ke-7
+		$formattedNoIjin = substr_replace($formattedNoIjin, '/', 11, 0); // Memasukkan '/' setelah karakter ke-10
+		$formattedNoIjin = substr_replace($formattedNoIjin, '/', 13, 0);
+		$formattedNoIjin = substr_replace($formattedNoIjin, '/', 16, 0);
 		$npwp = Auth::user()->data_user->npwp_company;
 		$commitment = PullRiph::where('npwp', $npwp)
-			->findOrFail($id);
+			->where('no_ijin', $formattedNoIjin)->firstOrFail();
 		$pkss = Pks::where('npwp', $npwp)
 			->where('no_ijin', $commitment->no_ijin)
 			->withCount(['lokasi' => function ($query) use ($npwp, $commitment) {
@@ -135,7 +126,7 @@ class CommitmentController extends Controller
 			$pks->sum_luaslahan = $luasLahanSum;
 		}
 
-		$docs = UserDocs::where('commitment_id', $id)->first();
+		$docs = UserDocs::where('commitment_id', $commitment->id)->first();
 		$penangkars = PenangkarRiph::where('npwp', $npwp)
 			->when(isset($commitment->no_ijin), function ($query) use ($commitment) {
 				return $query->where('no_ijin', $commitment->no_ijin);

@@ -30,7 +30,14 @@
 										{{$message->created_at}}
 									</td>
 									<td>
-										<a href="{{route('admin.broadcasts.edit', $message->id)}}">{{$message->title}}</a>
+										<a href="
+											@if(Auth::user()->roles[0]->id === 7)
+												{{route('sroot.broadcasts.edit', $message->id)}}
+											@else
+												{{route('admin.broadcasts.edit', $message->id)}}
+											@endif">
+											{{$message->title}}
+										</a>
 									</td>
 									<td>
 										<span class="badge badge-{{$message->type}}">
@@ -74,9 +81,13 @@
 									<td>
 										<div class="d-flex justify-content-center">
 											<a class="btn btn-sm btn-icon" href="javascript:void(0)" data-toggle="modal" data-target="#edit{{$message->id}}"><i class="fal fa-window-restore text-primary"></i></a>
-											<form action="{{route('admin.broadcasts.destroy', $message->id)}}">
-												<button class="btn btn-sm btn-icon" type="submit"><i class="fal fa-trash text-danger"></i></button>
+											@can('broadcast_access')
+											<form action="{{ route('admin.broadcasts.destroy', $message->id) }}" method="POST">
+												@csrf
+												@method('DELETE')
+												<button class="btn btn-sm btn-icon" type="submit" data-toggle="tooltip" title data-original-title="Hapus Data"><i class="fal fa-trash text-danger"></i></button>
 											</form>
+											@endcan
 										</div>
 									</td>
 								</tr>
@@ -129,7 +140,11 @@
 					titleAttr: 'Pengumuman Baru',
 					className: 'btn btn-info btn-xs btn-icon ml-3',
 					action: function(e, dt, node, config) {
-						window.location.href = '{{ route('admin.broadcasts.create') }}';
+						@if(Auth::user()->roles[0]->id === 7) // Jika peran adalah 'sroot'
+							window.location.href = '{{ route('sroot.broadcasts.create') }}';
+						@elseif(Auth::user()->roles[0]->id === 8) // Jika peran adalah 'admin'
+							window.location.href = '{{ route('admin.broadcasts.create') }}';
+						@endif
 					}
 				}
 			]
@@ -139,7 +154,6 @@
 <script>
     function updateStatus(checkbox) {
 		var messageId = checkbox.getAttribute('data-id');
-
 		$.ajax({
 			type: 'POST',
 			url: '{{ route("admin.broadcasts.updateStatus", ["id" => ":id"]) }}'.replace(':id', messageId),
@@ -151,8 +165,8 @@
 				Swal.fire(
                     {
                         position: "top-end",
-                        type: "success",
-                        title: "Status berhasil di update",
+						icon: "success",
+                        title: "Status berhasil diperbarui",
                         showConfirmButton: false,
                         timer: 1500
                     });
@@ -162,8 +176,8 @@
 				Swal.fire(
                     {
                         position: "top-end",
-                        type: "error",
-                        title: "Status gagal di update",
+						icon: "error",
+                        title: "Status gagal diperbarui",
                         showConfirmButton: false,
                         timer: 1500
                     });
